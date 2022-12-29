@@ -36,7 +36,7 @@ const InputForm = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={top + bottom + 10}>
+      keyboardVerticalOffset={top + bottom + 50}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
           <Input

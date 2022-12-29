@@ -11,6 +11,11 @@ function HomeScreen() {
 
   const { todos } = useAppSelector((state) => state.TODO);
 
+  const pendingTodos = useMemo(
+    () => todos.filter((todo) => !todo.done),
+    [todos]
+  );
+
   const completedTodos = useMemo(
     () => todos.filter((todo) => todo.done),
     [todos]
@@ -21,17 +26,15 @@ function HomeScreen() {
       flex='1'
       paddingTop={Platform.OS === 'ios' ? 0 : '20px'}
       paddingBottom={Platform.OS === 'ios' ? bottom : 0}
-      paddingX='10px'>
+      paddingX='10px'
+      backgroundColor='white'>
       <VStack flex='1' space='10px'>
-        <Text fontSize='26px' fontWeight='extrabold'>
-          Todo
-        </Text>
         <Box flex='1'>
           <View marginBottom='10px'>
-            <Text>LIST</Text>
+            <Text>해야 할 일 {pendingTodos.length}개</Text>
           </View>
           <FlatList
-            data={todos}
+            data={pendingTodos}
             keyExtractor={(item) => String(item.id)}
             renderItem={({ item }) => <TodoItem todo={item} />}
             ItemSeparatorComponent={() => <Box h='30px' />}
@@ -40,7 +43,7 @@ function HomeScreen() {
         <Divider />
         <Box flex='1'>
           <View marginBottom='10px'>
-            <Text>COMPLETED</Text>
+            <Text>완료한 일 {completedTodos.length}개</Text>
           </View>
           <FlatList
             data={completedTodos}
