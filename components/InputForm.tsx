@@ -38,6 +38,8 @@ const InputForm = () => {
             }}
             InputRightElement={
               <Pressable
+                hitSlop={10}
+                pressRetentionOffset={100}
                 marginRight='5px'
                 onPress={() => Alert.alert('추가추가')}>
                 <AntDesign name='pluscircle' size={24} color='black' />
