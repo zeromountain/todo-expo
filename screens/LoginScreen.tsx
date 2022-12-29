@@ -1,12 +1,20 @@
 import { Alert, Platform, TextInput, TouchableOpacity } from 'react-native';
 import React, { useRef } from 'react';
-import { Box, Input, KeyboardAvoidingView, Text, VStack } from 'native-base';
+import {
+  Box,
+  Flex,
+  Input,
+  KeyboardAvoidingView,
+  Text,
+  useToast,
+  VStack,
+} from 'native-base';
 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
-import { FirebaseError } from 'firebase/app';
 
 const LoginScreen = () => {
+  const toast = useToast();
   const emailRef = useRef<string>('');
   const passwordRef = useRef<string>('');
   const emailInputRef = useRef<TextInput>(null);
@@ -32,6 +40,25 @@ const LoginScreen = () => {
         passwordRef.current
       );
       console.log('user', user);
+      toast.show({
+        render: () => {
+          return (
+            <Flex
+              alignItems='center'
+              justifyContent='center'
+              bg='emerald.500'
+              px='2'
+              py='1'
+              rounded='sm'
+              mb={5}>
+              <Text color='white' fontSize='20px' fontWeight='bold'>
+                회원가입 성공
+              </Text>
+              <Text color='white'>{user.email}로 가입되었습니다.</Text>
+            </Flex>
+          );
+        },
+      });
     } catch (error: any) {
       console.log('signup error: ', error.code);
       if (error.code.includes('auth/email-already-in-use')) {
@@ -61,6 +88,8 @@ const LoginScreen = () => {
       keyboardVerticalOffset={100}>
       <VStack space='20px'>
         <Input
+          // autoComplete={Platform.OS === 'web' ? 'none' : 'off'}
+          autoComplete='off'
           autoCapitalize='none'
           placeholder='이메일을 입력하세요.'
           placeholderTextColor='gray.300'
