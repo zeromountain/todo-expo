@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import store from './store';
+import app from './firebase';
 
 const Stack = createNativeStackNavigator();
 

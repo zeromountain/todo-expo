@@ -1,0 +1,26 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+import auth from 'firebase/auth';
+import Constants from 'expo-constants';
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: Constants.expoConfig?.extra?.firebaseApiKey,
+  authDomain: 'todo-expo-4836e.firebaseapp.com',
+  projectId: 'todo-expo-4836e',
+  storageBucket: 'todo-expo-4836e.appspot.com',
+  messagingSenderId: '518483268861',
+  appId: Constants.expoConfig?.extra?.firebaseAppId,
+  measurementId: 'G-4TPMD323GR',
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+export default app;
