@@ -15,7 +15,12 @@ const TodoItem = () => {
         <Text fontSize='16px'>코딩하기</Text>
       </HStack>
       <Pressable hitSlop={10} onPress={() => Alert.alert('삭제삭제')}>
-        <Ionicons name='remove-circle' size={24} color='red' />
+        <Ionicons
+          name='remove-circle'
+          size={24}
+          color='red'
+          style={styles.deleteDone}
+        />
       </Pressable>
     </View>
   );
@@ -23,4 +28,8 @@ const TodoItem = () => {
 
 export default TodoItem;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  deleteDone: {
+    opacity: 0.3,
+  },
+});

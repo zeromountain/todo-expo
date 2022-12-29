@@ -8,6 +8,8 @@ import TodoItem from '../components/TodoItem';
 function HomeScreen() {
   const { top, bottom } = useSafeAreaInsets();
 
+  console.log('HomeScreen', top, bottom);
+
   return (
     <View
       flex='1'
