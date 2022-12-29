@@ -3,11 +3,12 @@ import {
   Keyboard,
   Platform,
   StyleSheet,
+  TextInput,
   TouchableWithoutFeedback,
 } from 'react-native';
 import { Input, KeyboardAvoidingView, Pressable, View } from 'native-base';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AntDesign } from '@expo/vector-icons';
@@ -17,6 +18,7 @@ import { addTodo } from '../store/todos/todoSlice';
 const InputForm = () => {
   const { top, bottom } = useSafeAreaInsets();
   const textRef = useRef<string>('');
+  const inputRef = useRef<TextInput>(null);
   const dispatch = useAppDispatch();
 
   const handleSubmit = () => {
@@ -25,11 +27,10 @@ const InputForm = () => {
       return;
     }
 
-    dispatch(
-      addTodo({
-        text: textRef.current,
-      })
-    );
+    dispatch(addTodo(textRef.current));
+
+    textRef.current = '';
+    inputRef.current?.clear();
   };
 
   return (
@@ -39,6 +40,7 @@ const InputForm = () => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View>
           <Input
+            ref={inputRef}
             placeholder='할 일을 입력하세요.'
             borderColor='gray.300'
             fontSize='15px'
