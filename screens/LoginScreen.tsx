@@ -1,5 +1,5 @@
 import { Alert, Platform, TextInput, TouchableOpacity } from 'react-native';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Box,
   Flex,
@@ -10,11 +10,24 @@ import {
   VStack,
 } from 'native-base';
 
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { auth } from '../firebase';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '../App';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type LoginNavigationProps = NativeStackNavigationProp<
+  RootStackParamList,
+  'Home'
+>;
 
 const LoginScreen = () => {
   const toast = useToast();
+  const navigation = useNavigation<LoginNavigationProps>();
   const emailRef = useRef<string>('');
   const passwordRef = useRef<string>('');
   const emailInputRef = useRef<TextInput>(null);
@@ -24,6 +37,48 @@ const LoginScreen = () => {
     if (!emailRef.current.trim() || !passwordRef.current.trim()) {
       Alert.alert('이메일과 비밀번호를 입력하세요.');
       return;
+    }
+
+    try {
+      const { user } = await signInWithEmailAndPassword(
+        auth,
+        emailRef.current,
+        passwordRef.current
+      );
+      console.log(user);
+      toast.show({
+        render: () => {
+          return (
+            <Flex
+              alignItems='center'
+              justifyContent='center'
+              bg='emerald.500'
+              px='2'
+              py='1'
+              rounded='sm'
+              mb={5}>
+              <Text color='white' fontSize='20px' fontWeight='bold'>
+                로그인 성공
+              </Text>
+              <Text color='white'>{user.email}로 로그인 되었습니다.</Text>
+            </Flex>
+          );
+        },
+      });
+    } catch (error: any) {
+      console.log('login error', error.message);
+      if (error.code.includes('auth/user-not-found')) {
+        Alert.alert(
+          '에러',
+          '존재하지 않는 이메일 입니다.',
+          [
+            {
+              text: '확인',
+            },
+          ],
+          { cancelable: true }
+        );
+      }
     }
   };
 
@@ -78,6 +133,14 @@ const LoginScreen = () => {
     }
   };
 
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigation.navigate('Home');
+      }
+    });
+  }, []);
+
   return (
     <KeyboardAvoidingView
       flex='1'
@@ -88,7 +151,6 @@ const LoginScreen = () => {
       keyboardVerticalOffset={100}>
       <VStack space='20px'>
         <Input
-          // autoComplete={Platform.OS === 'web' ? 'none' : 'off'}
           autoComplete='off'
           autoCapitalize='none'
           placeholder='이메일을 입력하세요.'
