@@ -1,14 +1,20 @@
-import { Box, Divider, ScrollView, Text, View, VStack } from 'native-base';
-import React from 'react';
+import { Box, Divider, FlatList, Text, View, VStack } from 'native-base';
+import React, { useMemo } from 'react';
 import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import InputForm from '../components/InputForm';
 import TodoItem from '../components/TodoItem';
+import { useAppSelector } from '../store/hoook';
 
 function HomeScreen() {
-  const { top, bottom } = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
 
-  console.log('HomeScreen', top, bottom);
+  const { todos } = useAppSelector((state) => state.TODO);
+
+  const completedTodos = useMemo(
+    () => todos.filter((todo) => todo.done),
+    [todos]
+  );
 
   return (
     <View
@@ -21,28 +27,27 @@ function HomeScreen() {
           Todo
         </Text>
         <Box flex='1'>
-          <View paddingBottom='10px'>
+          <View marginBottom='10px'>
             <Text>LIST</Text>
           </View>
-          <ScrollView>
-            <VStack space='30px'>
-              <TodoItem />
-              <TodoItem />
-              <TodoItem />
-              <TodoItem />
-              <TodoItem />
-              <TodoItem />
-              <TodoItem />
-              <TodoItem />
-              <TodoItem />
-            </VStack>
-          </ScrollView>
+          <FlatList
+            data={todos}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => <TodoItem todo={item} />}
+            ItemSeparatorComponent={() => <Box h='30px' />}
+          />
         </Box>
         <Divider />
         <Box flex='1'>
-          <View>
+          <View marginBottom='10px'>
             <Text>COMPLETED</Text>
           </View>
+          <FlatList
+            data={completedTodos}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => <TodoItem todo={item} />}
+            ItemSeparatorComponent={() => <Box h='30px' />}
+          />
         </Box>
       </VStack>
       <InputForm />
