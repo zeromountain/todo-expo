@@ -30,6 +30,7 @@ module.exports = {
     extra: {
       firebaseApiKey: process.env.FIREBAS_API_KEY,
       firebaseAppId: process.env.FIREBASE_APP_ID,
+      apiBaseUrl: process.env.API_BASE_URL,
     },
   },
 };

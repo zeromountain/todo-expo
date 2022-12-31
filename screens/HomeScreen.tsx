@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useQuery } from '@tanstack/react-query';
 import { onAuthStateChanged } from 'firebase/auth';
 import {
   Box,
@@ -14,6 +15,7 @@ import {
 import React, { useEffect, useMemo } from 'react';
 import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import instance from '../apis/_axios/instance';
 import { RootStackParamList } from '../App';
 import InputForm from '../components/InputForm';
 import TodoItem from '../components/TodoItem';
@@ -31,15 +33,27 @@ function HomeScreen() {
   const navigation = useNavigation<HomeNavigationProps>();
 
   const { todos } = useAppSelector((state) => state.TODO);
+  const { data } = useQuery<
+    { completed: boolean; id: number; todo: string; userId: number }[]
+  >({
+    queryKey: ['GET_TODOS'],
+    queryFn: async () => {
+      const { data } = await instance.get('/todos');
+
+      return data.todos;
+    },
+  });
+
+  console.log('data:', data);
 
   const pendingTodos = useMemo(
-    () => todos.filter((todo) => !todo.done),
-    [todos]
+    () => data?.filter((todo) => !todo.completed),
+    [data]
   );
 
   const completedTodos = useMemo(
-    () => todos.filter((todo) => todo.done),
-    [todos]
+    () => data?.filter((todo) => todo.completed),
+    [data]
   );
 
   useEffect(() => {
@@ -78,7 +92,7 @@ function HomeScreen() {
       <VStack flex='1' space='10px'>
         <Box flex='1'>
           <View marginBottom='10px'>
-            <Text>해야 할 일 {pendingTodos.length}개</Text>
+            <Text>해야 할 일 {pendingTodos?.length}개</Text>
           </View>
           <FlatList
             data={pendingTodos}
@@ -90,7 +104,7 @@ function HomeScreen() {
         <Divider />
         <Box flex='1'>
           <View marginBottom='10px'>
-            <Text>완료한 일 {completedTodos.length}개</Text>
+            <Text>완료한 일 {completedTodos?.length}개</Text>
           </View>
           <FlatList
             data={completedTodos}

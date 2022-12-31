@@ -11,8 +11,8 @@ import { deleteTodo, toggleTodo, updateTodo } from '../store/todos/todoSlice';
 
 type TodoType = {
   id: number;
-  text: string;
-  done: boolean;
+  todo: string;
+  completed: boolean;
 };
 
 interface TodoItemProps {
@@ -63,7 +63,7 @@ const TodoItem = ({ todo }: TodoItemProps) => {
               borderColor: 'black',
             }}
             ref={inputRef}
-            defaultValue={todo.text}
+            defaultValue={todo.todo}
             onChangeText={(text) => (textRef.current = text)}
           />
           <TouchableOpacity onPress={handleUpdateTodo}>
@@ -79,18 +79,21 @@ const TodoItem = ({ todo }: TodoItemProps) => {
         </HStack>
       ) : (
         <View flex='1' flexDirection='row' justifyContent='space-between'>
-          <HStack space='10px'>
+          <HStack space='10px' backgroundColor='blue.500'>
             <Pressable hitSlop={10} onPress={handleToggleTodo}>
               <AntDesign
-                name={todo.done ? 'checkcircle' : 'checkcircleo'}
+                name={todo.completed ? 'checkcircle' : 'checkcircleo'}
                 size={24}
                 color='black'
               />
             </Pressable>
             <Text
+              numberOfLines={1}
+              maxW='200px'
+              ellipsizeMode='tail'
               fontSize='16px'
-              textDecorationLine={todo.done ? 'line-through' : 'none'}>
-              {todo.text}
+              textDecorationLine={todo.completed ? 'line-through' : 'none'}>
+              {todo.todo}
             </Text>
           </HStack>
           <HStack space='20px'>
@@ -102,7 +105,7 @@ const TodoItem = ({ todo }: TodoItemProps) => {
                 name='remove-circle'
                 size={24}
                 color='red'
-                style={todo.done && styles.deleteDone}
+                style={todo.completed && styles.deleteDone}
               />
             </Pressable>
           </HStack>
