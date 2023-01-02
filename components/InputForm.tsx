@@ -14,12 +14,47 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import { useAppDispatch } from '../store/hoook';
 import { addTodo } from '../store/todos/todoSlice';
+import { useMutation } from '@tanstack/react-query';
+import instance from '../apis/_axios/instance';
+import { AxiosError } from 'axios';
 
-const InputForm = () => {
+interface InputFormProps {
+  userId?: number;
+}
+
+const InputForm = ({ userId }: InputFormProps) => {
   const { top, bottom } = useSafeAreaInsets();
   const textRef = useRef<string>('');
   const inputRef = useRef<TextInput>(null);
   const dispatch = useAppDispatch();
+
+  const { mutate } = useMutation<
+    {
+      id: number;
+      todo: string;
+      completed: boolean;
+      userId: number;
+    },
+    AxiosError,
+    {
+      todo: string;
+      completed: boolean;
+      userId?: number;
+    }
+  >(
+    async (body) => {
+      const { data } = await instance.post('/todos/add', body);
+      return data;
+    },
+    {
+      onSuccess: (data) => {
+        console.log(data);
+      },
+      onError: (error) => {
+        console.log(error?.response?.data);
+      },
+    }
+  );
 
   const handleSubmit = () => {
     if (!textRef.current.trim()) {
@@ -27,7 +62,12 @@ const InputForm = () => {
       return;
     }
 
-    dispatch(addTodo(textRef.current));
+    // dispatch(addTodo(textRef.current));
+    mutate({
+      todo: textRef.current,
+      completed: false,
+      userId,
+    });
 
     textRef.current = '';
     inputRef.current?.clear();

@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, User } from 'firebase/auth';
 import {
   Box,
   Divider,
@@ -12,7 +12,7 @@ import {
   View,
   VStack,
 } from 'native-base';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import instance from '../apis/_axios/instance';
@@ -31,6 +31,7 @@ function HomeScreen() {
   const { bottom } = useSafeAreaInsets();
   const toast = useToast();
   const navigation = useNavigation<HomeNavigationProps>();
+  const [userId, setUserId] = useState<number | undefined>();
 
   const { todos } = useAppSelector((state) => state.TODO);
   const { data } = useQuery<
@@ -43,8 +44,6 @@ function HomeScreen() {
       return data.todos;
     },
   });
-
-  console.log('data:', data);
 
   const pendingTodos = useMemo(
     () => data?.filter((todo) => !todo.completed),
@@ -114,7 +113,7 @@ function HomeScreen() {
           />
         </Box>
       </VStack>
-      <InputForm />
+      <InputForm userId={userId} />
     </View>
   );
 }

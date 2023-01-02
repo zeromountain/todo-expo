@@ -45,7 +45,7 @@ const LoginScreen = () => {
         emailRef.current,
         passwordRef.current
       );
-      console.log(user);
+
       toast.show({
         render: () => {
           return (
@@ -94,7 +94,7 @@ const LoginScreen = () => {
         emailRef.current,
         passwordRef.current
       );
-      console.log('user', user);
+
       toast.show({
         render: () => {
           return (
